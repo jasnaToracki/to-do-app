@@ -31,7 +31,7 @@ public class Main {
                     try {
                         addNewTask();
                     } catch (IOException e) {
-                       System.out.println("\n---\nError saving tasks to file!\n---\n");
+                        System.out.println("\n---\nError saving tasks to file!\n---\n");
                     }
                     break;
                 case 2:
@@ -66,6 +66,9 @@ public class Main {
                 case 12:
                     changeTaskStatus3();
                     break;
+                case 13:
+                    changeTaskStatus4();
+                    break;
                 case 0:
                     break;
                 default:
@@ -73,7 +76,8 @@ public class Main {
             }
         } while (choice != 0);
     }
-    private static void displayOptions () {
+
+    private static void displayOptions() {
         System.out.println("Possible options:");
         System.out.println("1. Add new task: ");
         System.out.println("2. Show today's tasks: ");
@@ -84,19 +88,22 @@ public class Main {
         System.out.println("7. Mark task as NOT DONE");
         System.out.println("8. Search for a task: ");
         System.out.println("9. Show task details: ");
-        System.out.println("10. Change task status with integer (DONE or NOT DONE): ");
+        System.out.println("10. Change task status with Integer (DONE or NOT DONE): ");
         System.out.println("11. Change task status with String (DONE or NOT DONE): ");
-        System.out.println("12. Change tasks status with String using Switch (DONE or NOT DONE): ");
+        System.out.println("12. Change task status using Switch (DONE or NOT DONE): ");
+        System.out.println("13. Change task status using Loop (DONE or NOT DONE)");
         System.out.println("0. Exit");
         System.out.println("------------------");
     }
-    private static int getUserChoice () {
+
+    private static int getUserChoice() {
         System.out.print("Enter your choice: ");
         String choice = scanner.nextLine();
 
         return Integer.parseInt(choice);
     }
-    private static void addNewTask () throws IOException {
+
+    private static void addNewTask() throws IOException {
         System.out.println("\n *** ADD NEW TASK***");
         System.out.print("TASK DESCRIPTION: ");
         String description = scanner.nextLine();
@@ -119,7 +126,7 @@ public class Main {
         //taskManager.save();
     }
 
-    private static void displayTasks (List<Task> tasks) {
+    private static void displayTasks(List<Task> tasks) {
         if (!tasks.isEmpty()) {
             System.out.println("\n ------------------- \n");
         }
@@ -146,30 +153,33 @@ public class Main {
 
     }
 
-    private static void markTaskAsDone () {
+    private static void markTaskAsDone() {
         System.out.print("Enter ID of the task you want to mark as DONE: ");
         String taskID = scanner.nextLine();
 
         if (taskManager.updateDone(Long.parseLong(taskID), true)) {
-            try {taskManager.save();
+            try {
+                taskManager.save();
             } catch (IOException e) {
                 System.out.println("Error saving task.");
             }
         }
     }
-    private static void markTaskAsNotDone () throws IOException {
+
+    private static void markTaskAsNotDone() throws IOException {
         System.out.println("Enter ID of the task you want to mark as NOT DONE");
         String taskID = scanner.nextLine();
 
         if (taskManager.updateDone(Long.parseLong(taskID), false)) {
-            try {taskManager.save();
+            try {
+                taskManager.save();
             } catch (IOException e) {
                 System.out.println("Error saving task.");
             }
         }
     }
 
-    private static List<Task> searchForTask () {
+    private static List<Task> searchForTask() {
         System.out.println("\nEnter search term: ");
         String searchTerm = scanner.nextLine();
 
@@ -177,7 +187,7 @@ public class Main {
 
     }
 
-    private static void showTaskDetails () {
+    private static void showTaskDetails() {
         System.out.print("Enter ID of the task you want to view: ");
         String taskId = scanner.nextLine();
         Task task = taskManager.getTaskById(Long.parseLong(taskId));
@@ -195,10 +205,11 @@ public class Main {
         System.out.println("\n-----------------------------\n");
     }
 
-    private static int getUserStatusChoice () {
+    private static int getUserStatusChoice() {
         String choice = scanner.nextLine();
         return Integer.parseInt(choice);
     }
+
     public static void changeTaskStatus() {
         System.out.print("Enter ID of the task you want to change the status: ");
         String taskId = scanner.nextLine();
@@ -207,17 +218,18 @@ public class Main {
         if (task != null) {
             System.out.println("Task is found! To mark task as DONE enter: 1, and for NOT DONE enter: 0 ");
 
-           int userStatus = getUserStatusChoice();
+            int userStatus = getUserStatusChoice();
 
             if (userStatus == 1) {
-                try {taskManager.updateDone(Long.parseLong(taskId), true);
+                try {
+                    taskManager.updateDone(Long.parseLong(taskId), true);
                     taskManager.save();
                 } catch (IOException e) {
                     System.out.println("Error update.");
                 }
-            }
-            else if (userStatus == 0) {
-                try {taskManager.updateDone(Long.parseLong(taskId), false);
+            } else if (userStatus == 0) {
+                try {
+                    taskManager.updateDone(Long.parseLong(taskId), false);
                     taskManager.save();
                 } catch (IOException e) {
                     System.out.println("Error update.");
@@ -227,35 +239,39 @@ public class Main {
             System.out.println("No task found!");
         }
     }
-    private static String getUserChoice2 () {
-      return scanner.nextLine();
+
+    private static String getUserChoice2() {
+        return scanner.nextLine();
     }
-     private static void changeTaskStatus2 () {
-         System.out.print("Enter ID of the task you want to change the status: ");
-         String taskId = scanner.nextLine();
-         Task task = taskManager.getTaskById(Long.parseLong(taskId));
 
-         if (task != null) {
-             System.out.println("Task is found! To change task status enter DONE or NOT DONE: ");
+    private static void changeTaskStatus2() {
+        System.out.print("Enter ID of the task you want to change the status: ");
+        String taskId = scanner.nextLine();
+        Task task = taskManager.getTaskById(Long.parseLong(taskId));
 
-             String userChoice = getUserChoice2();
+        if (task != null) {
+            System.out.println("Task is found! To change task status enter DONE or NOT DONE: ");
 
-             if ("done".toLowerCase().equals(userChoice)) {
-                 try {taskManager.updateDone(Long.parseLong(taskId), true);
-                     taskManager.save();
-                 } catch (IOException e) {
-                     System.out.println("Error update.");
-                 }
-             }  else if ("not done".toLowerCase().equals(userChoice)) {
-                 try {taskManager.updateDone(Long.parseLong(taskId), false);
-                     taskManager.save();
-                 } catch (IOException e) {
-                     System.out.println("Error update.");
-                 }
-             }
-     }
+            String userChoice = getUserChoice2();
+
+            if ("done".toLowerCase().equals(userChoice)) {
+                try {
+                    taskManager.updateDone(Long.parseLong(taskId), true);
+                    taskManager.save();
+                } catch (IOException e) {
+                    System.out.println("Error update.");
+                }
+            } else if ("not done".toLowerCase().equals(userChoice)) {
+                try {
+                    taskManager.updateDone(Long.parseLong(taskId), false);
+                    taskManager.save();
+                } catch (IOException e) {
+                    System.out.println("Error update.");
+                }
+            }
+        }
     }
-    private static void changeTaskStatus3 () throws IOException {
+    private static void changeTaskStatus3() throws IOException {
         System.out.print("Enter ID of the task you want to change the status: ");
         String taskId = scanner.nextLine();
         Task task = taskManager.getTaskById(Long.parseLong(taskId));
@@ -266,15 +282,41 @@ public class Main {
             String userChoice = getUserChoice2();
 
             switch (userChoice.toLowerCase()) {
-                case "done": taskManager.updateDone(Long.parseLong(taskId), true);
+                case "done":
+                    taskManager.updateDone(Long.parseLong(taskId), true);
                     taskManager.save();
                     break;
-                case "not done": taskManager.updateDone(Long.parseLong(taskId), false);
+                case "not done":
+                    taskManager.updateDone(Long.parseLong(taskId), false);
                     taskManager.save();
                     break;
-                default: System.out.println("Error update.");
+                default:
+                    System.out.println("Error update.");
             }
         }
     }
+    private static void changeTaskStatus4 () throws IOException {
 
+        Task task;
+        do {
+            System.out.print("Enter ID of the task you want to change the status: ");
+            String taskId = scanner.nextLine();
+            task = taskManager.getTaskById(Long.parseLong(taskId));
+            System.out.print("Task is found. Enter done or not done to change the status: ");
+            String userChoice = getUserChoice2();
+
+            if ("done".toLowerCase().equals(userChoice)) {
+                taskManager.updateDone(Long.parseLong(taskId), true);
+                taskManager.save();
+                break;
+            } else if ("not done".toLowerCase().equals(userChoice)) {
+                taskManager.updateDone(Long.parseLong(taskId), false);
+                taskManager.save();
+                break;
+            } else {
+                System.out.println("No task found!");
+            }
+
+        } while (task != null);
+    }
 }
