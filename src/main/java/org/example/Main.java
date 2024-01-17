@@ -316,7 +316,6 @@ public class Main {
             } else {
                 System.out.println("No task found!");
             }
-
         } while (task != null);
     }
 }
