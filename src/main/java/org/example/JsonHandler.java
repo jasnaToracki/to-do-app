@@ -37,6 +37,7 @@ public class JsonHandler {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
 
         return tasks;

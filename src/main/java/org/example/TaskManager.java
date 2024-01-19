@@ -11,8 +11,6 @@ public class TaskManager {
     private List<Task> tasks = new ArrayList<>();  //TASK LIST
     private final String FILE_NAME = "tasks.json";  // FAJL U KOJI CEMO DA SNIMIMO TASKOVE
 
-    private int userChoice;
-
 
     public TaskManager addTask (Task task) {   //METOD KOJI DODAJE VEC NAPRAVLJEN TASK
         this.tasks.add(task);
@@ -73,7 +71,6 @@ public class TaskManager {
         }
         return found;
     }
-
     public Task getTaskById (long taskId) {
         for (Task task : tasks) {
             if (task.getId() == taskId) {
@@ -81,6 +78,17 @@ public class TaskManager {
             }
         }
         return null;
+    }
+    public List<Task> searchTasksByTag (String userTagChoice) throws IOException {
+        List<Task> foundTasksByTag = new ArrayList<>();
+
+        for (Task task : tasks) {
+
+            if (task.getTag() != null && task.getTag().equalsIgnoreCase(userTagChoice)) {
+                foundTasksByTag.add(task);
+            }
+        }
+        return foundTasksByTag;
     }
 
     // zapisace sve taskove koji se nalaze u spisku u fajlu
@@ -114,8 +122,8 @@ public class TaskManager {
 //        }
     }
 
-    /* inclusive znaci da ukljucuje i vreme koje je prosledjeno
-       exclusive znaci da ih ne ukljucuje
+    /* inclusive ---> ukljucuje i vreme koje je prosledjeno
+       exclusive ---> ne ukljucuje vreme koje je prosledjeno
     */
 
     private List<Task> getTasksBetweenDatesInclusive (LocalDateTime startDate, LocalDateTime endDate) {
@@ -132,9 +140,4 @@ public class TaskManager {
         }
         return found;
     }
-//    public String getUserChoice () {
-//        return userChoice;
-//    }
-
-
 }

@@ -1,15 +1,15 @@
 package org.example;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
-
     private static final Scanner scanner = new Scanner(System.in);
     private static final TaskManager taskManager = new TaskManager();
 
@@ -18,7 +18,7 @@ public class Main {
         try {
             taskManager.load();
         } catch (IOException e) {
-
+            System.out.println("Error.");
         }
 
         int choice;
@@ -69,6 +69,9 @@ public class Main {
                 case 13:
                     changeTaskStatus4();
                     break;
+                case 14:
+                    searchTasksByTags();
+                    break;
                 case 0:
                     break;
                 default:
@@ -88,10 +91,11 @@ public class Main {
         System.out.println("7. Mark task as NOT DONE");
         System.out.println("8. Search for a task: ");
         System.out.println("9. Show task details: ");
-        System.out.println("10. Change task status with Integer (DONE or NOT DONE): ");
-        System.out.println("11. Change task status with String (DONE or NOT DONE): ");
-        System.out.println("12. Change task status using Switch (DONE or NOT DONE): ");
-        System.out.println("13. Change task status using Loop (DONE or NOT DONE)");
+        System.out.println("10. a) Change task status (DONE or NOT DONE): "); //integer
+        System.out.println("11. b) Change task status (DONE or NOT DONE): "); //string
+        System.out.println("12. c) Change task status (DONE or NOT DONE): "); //switch, string
+        System.out.println("13. d) Change task status (DONE or NOT DONE)"); //loop
+        System.out.println("14. Search tasks using tags: ");
         System.out.println("0. Exit");
         System.out.println("------------------");
     }
@@ -105,43 +109,62 @@ public class Main {
 
     private static void addNewTask() throws IOException {
         System.out.println("\n *** ADD NEW TASK***");
+
         System.out.print("TASK DESCRIPTION: ");
         String description = scanner.nextLine();
+
         System.out.print("TASK DUE DATE (yyyy-MM-dd): ");
         String dueDateString = scanner.nextLine();
+
         System.out.print("TASK DUE TIME: (HH:mm:ss): ");
         String dueTimeString = scanner.nextLine();
 
+        @NotNull
         LocalDate dueDate = LocalDate.parse(dueDateString);
         LocalTime dueTime = LocalTime.parse(dueTimeString);
+
+        boolean validChoice = false;
+        String userTagChoice;
+        do {
+            System.out.print("ADD TAG, CHOOSE BETWEEN: HOME & WORK:  ");
+            userTagChoice = getUserChoice2();
+
+            if (userTagChoice.equalsIgnoreCase("work") || userTagChoice.equalsIgnoreCase("home")) {
+                validChoice = true;
+            } else {
+                System.out.println("\nInvalid choice. Please enter valid option.  \n");
+            }
+        } while (!validChoice);
 
         // pravi ono sto cemo proslediti tasku
         LocalDateTime due = LocalDateTime.of(dueDate, dueTime);
 
         //pravi novu instancu klase TASK
-        Task newTask = new Task(description, due);
+        Task newTask = new Task(description, due, userTagChoice);
 
         //dodaje novi task u taskManager
         taskManager.addTask(newTask).save();
+        //taskManager.addTask(newTask);
         //taskManager.save();
     }
 
-    private static void displayTasks(List<Task> tasks) {
+    private static void displayTasks(@NotNull List<Task> tasks) {
         if (!tasks.isEmpty()) {
             System.out.println("\n ------------------- \n");
         }
 
         for (Task task : tasks) {
-            System.out.print("#" + task.getId());
+            System.out.print(" #" + task.getId());
             System.out.print(" " + task.getDescription(25));
             System.out.print(", Due: " + task.getDueDateFormatted());
+            System.out.print(", TAG: #" + task.getTag());
 
             if (task.isDone()) {
-                System.out.print(" ----D O N E!");
+                System.out.print(" ------D O N E!\n");
             } else {
-                System.out.println(" ----NOT DONE");
+                System.out.println(" ------NOT DONE\n");
             }
-            System.out.println();
+           System.out.println();
         }
 
         if (!tasks.isEmpty()) {
@@ -165,7 +188,6 @@ public class Main {
             }
         }
     }
-
     private static void markTaskAsNotDone() throws IOException {
         System.out.println("Enter ID of the task you want to mark as NOT DONE");
         String taskID = scanner.nextLine();
@@ -178,13 +200,11 @@ public class Main {
             }
         }
     }
-
     private static List<Task> searchForTask() {
         System.out.println("\nEnter search term: ");
         String searchTerm = scanner.nextLine();
 
         return taskManager.searchForTask(searchTerm);
-
     }
 
     private static void showTaskDetails() {
@@ -202,6 +222,7 @@ public class Main {
         System.out.println("Description:  " + task.getDescription());
         System.out.println("Due date:     " + task.getDueDateFormatted());
         System.out.println("Is done:      " + task.isDone());
+        System.out.println("Tags:  "        + task.getTag());
         System.out.println("\n-----------------------------\n");
     }
 
@@ -317,5 +338,17 @@ public class Main {
                 System.out.println("No task found!");
             }
         } while (task != null);
+    }
+    private static void searchTasksByTags () throws IOException {
+        System.out.print("Enter HOME or WORK to filter tasks: ");
+        String tag = getUserChoice2();
+
+        List<Task> foundTasks = taskManager.searchTasksByTag(tag);
+
+        if (!foundTasks.isEmpty()) {
+            System.out.println("Found tasks are: " + foundTasks);
+        } else {
+            System.out.println("No tasks found!");
+        }
     }
 }
